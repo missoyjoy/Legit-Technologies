@@ -2,124 +2,166 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Home, 
+  Info, 
+  Wrench, 
+  ShoppingBag, 
+  Users, 
+  Mail, 
+  Menu, 
+  X,
+  ExternalLink
+} from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
+
+// 👉 Put the address of your shop website here
+const SHOP_URL = "https://YOUR-SHOP-LINK";
+
+// Link styling for desktop
+const linkClass = "flex items-center gap-1.5 font-medium transition hover:text-[#0A4DA2] dark:hover:text-[#19C2FF]";
+
+// Logo styling
+const logoClass = "h-12 lg:h-16 w-auto";
 
 function Navbar() {
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const dropdownItems = [
-    { path: "/services/systems-innovation", label: "Systems Engineering & Digital Innovation" },
-    { path: "/services/consultancy", label: "Technology & Business Consultancy" },
-    { path: "/services/education", label: "Education & Upskilling" },
+  // Main navigation links with small icons
+  const navItems = [
+    { path: "/", label: "Home", icon: Home },
+    { path: "/about", label: "About Us", icon: Info },
+    { path: "/services", label: "Services", icon: Wrench },
+    { path: "/careers", label: "Careers", icon: Users },
+    { path: "/contact", label: "Contact Us", icon: Mail },
   ];
 
   return (
-    <header className="w-full">
+    <header className="w-full sticky top-0 z-50">
       {/* Top bar */}
-      <div className="bg-blue-200 text-white text-sm py-1 px-6 flex justify-center items-center">
-        <span>"ONLY LEGIT FROM LEGIT TECHNOLOGIES"</span>
+      <div className="relative bg-[#0A4DA2] text-white text-xs sm:text-sm py-1.5 px-4 sm:px-6 flex justify-center items-center tracking-wide">
+        <span className="font-semibold text-center">"ONLY LEGIT FROM LEGIT TECHNOLOGIES"</span>
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          <ThemeToggle />
+        </div>
       </div>
 
-      {/* Main navbar */}
-      <nav className="bg-gray-950 text-white shadow-lg">
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-20">
+      {/* Main Navbar */}
+      <nav
+        className="shadow-md border-b transition-colors duration-300
+                   bg-white text-slate-900 border-slate-200
+                   dark:bg-[#061A3A] dark:text-white dark:border-[#19C2FF]/25"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center h-20">
 
-          {/* Logo (left) */}
+          {/* Logo */}
           <Link to="/" className="flex items-center">
             <img
-              src="/LegitLogo.jpeg"
-              alt="Legit Technologies Logo"
-              className="h-16 w-auto 
-                         transition-all duration-500 ease-in-out
-                         animate-[float_4s_ease-in-out_infinite]
-                         hover:scale-110
-                         hover:drop-shadow-[0_0_18px_rgba(37,99,235,0.8)]"
+              src="/logolight.png"
+              alt="Legit Technologies Ltd"
+              className={`${logoClass} dark:hidden`}
+            />
+            <img
+              src="/logodark.png"
+              alt="Legit Technologies Ltd"
+              className={`${logoClass} hidden dark:block`}
             />
           </Link>
 
-          {/* Menu (right) */}
-          <ul className="flex space-x-8 items-center">
+          {/* Desktop Navigation Links */}
+          <ul className="hidden md:flex items-center space-x-8 text-sm">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.path}>
+                  <Link to={item.path} className={linkClass}>
+                    <Icon className="w-4 h-4 text-[#0A4DA2] dark:text-[#19C2FF]" />
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
 
+            {/* Shop Button */}
             <li>
-              <Link to="/" className="hover:text-blue-400 transition">
-                Home
-              </Link>
+              <a
+                href={SHOP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-semibold transition
+                           bg-[#0A4DA2] text-white hover:bg-[#061A3A]
+                           dark:bg-[#19C2FF] dark:text-[#061A3A] dark:hover:bg-white
+                           hover:shadow-[0_0_12px_rgba(25,194,255,0.6)]"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>Our Shop</span>
+                <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+              </a>
             </li>
-
-            <li>
-              <Link to="/about" className="hover:text-blue-400 transition">
-                About Us
-              </Link>
-            </li>
-
-            {/* Services menu with dropdown */}
-            <li className="relative">
-              <div className="flex items-center space-x-1">
-                {/* Services link */}
-                <Link
-                  to="/services"
-                  className="font-semibold hover:text-blue-400 transition"
-                >
-                  Services
-                </Link>
-
-                {/* Dropdown toggle arrow */}
-                <motion.span
-                  className="cursor-pointer font-semibold hover:text-blue-400 transition"
-                  onClick={() => setServicesOpen(!servicesOpen)}
-                  animate={{ rotate: servicesOpen ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  ▾
-                </motion.span>
-              </div>
-
-              {/* Dropdown items */}
-              <AnimatePresence>
-                {servicesOpen && (
-                  <motion.ul
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    transition={{ duration: 0.25 }}
-                    className="absolute left-0 mt-2 bg-gray-900 text-white rounded-lg shadow-lg w-72 z-20 p-3 space-y-1"
-                  >
-                    {dropdownItems.map((item, i) => (
-                      <motion.li
-                        key={item.path}
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: [ -10, 0, -3, 0 ] }}
-                        transition={{ delay: i * 0.1, duration: 0.35, type: "spring", stiffness: 200 }}
-                        whileHover={{ scale: 1.05, backgroundColor: "#2563eb", color: "#fff" }}
-                        className="rounded"
-                      >
-                        <Link
-                          to={item.path}
-                          className="block px-4 py-2 rounded transition-colors"
-                          onClick={() => setServicesOpen(false)}
-                        >
-                          {item.label}
-                        </Link>
-                      </motion.li>
-                    ))}
-                  </motion.ul>
-                )}
-              </AnimatePresence>
-            </li>
-
-            <li>
-              <Link to="/careers" className="hover:text-blue-400 transition">
-                Careers
-              </Link>
-            </li>
-
-            <li>
-              <Link to="/contact" className="hover:text-blue-400 transition">
-                Contact Us
-              </Link>
-            </li>
-
           </ul>
+
+          {/* Mobile Hamburger Button */}
+          <div className="flex md:hidden items-center">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0A4DA2] dark:focus:ring-[#19C2FF]"
+              aria-label="Toggle Navigation Menu"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-7 h-7 text-[#0A4DA2] dark:text-[#19C2FF]" />
+              ) : (
+                <Menu className="w-7 h-7 text-[#0A4DA2] dark:text-[#19C2FF]" />
+              )}
+            </button>
+          </div>
         </div>
+
+        {/* Mobile Responsive Navigation Drawer */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25 }}
+              className="md:hidden overflow-hidden border-t border-slate-200 dark:border-[#19C2FF]/20 bg-slate-50 dark:bg-[#0A2350]"
+            >
+              <ul className="flex flex-col space-y-4 px-6 py-5 text-base">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.path}>
+                      <Link
+                        to={item.path}
+                        className="flex items-center gap-3 py-1 font-medium hover:text-[#0A4DA2] dark:hover:text-[#19C2FF]"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        <Icon className="w-5 h-5 text-[#0A4DA2] dark:text-[#19C2FF]" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+
+                <li className="pt-2">
+                  <a
+                    href={SHOP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex justify-center items-center gap-2 w-full rounded-md py-2.5 font-semibold text-center
+                               bg-[#0A4DA2] text-white hover:bg-[#061A3A]
+                               dark:bg-[#19C2FF] dark:text-[#061A3A]"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <ShoppingBag className="w-5 h-5" />
+                    <span>Our Shop</span>
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                </li>
+              </ul>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </header>
   );
